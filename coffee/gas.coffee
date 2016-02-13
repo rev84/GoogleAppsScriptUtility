@@ -23,42 +23,88 @@ class gas
     true
 
   # セルの値を取得
-  @get:(x, y, name = null)->
-    name = @_activeSheetName if name is null
+  @get:(x, y, name = @_activeSheetName)->
     sheet = @getSheet(name)
     return false if sheet is null
 
-    sheet.getRange(x+1, y+1).getValue()
+    sheet.getRange(y+1, x+1).getValue()
 
   # セルの値を設定
-  @set:(val, x, y, name = @_activeSheetName, xEnd = x, yEnd = y)->
+  @set:(val, x, y, xEnd = x, yEnd = y, name = @_activeSheetName)->
     xNum = xEnd - x + 1
     yNum = yEnd - y + 1
 
     sheet = @getSheet(name)
     return false if sheet is null
 
-    sheet.getRange(x+1, y+1, xNum, yNum).setValue(val)
+    sheet.getRange(y+1, x+1, yNum, xNum).setValue(val)
 
   # セルの色を変更
-  @color:(colorCode, x, y, name = @_activeSheetName, xEnd = x, yEnd = y)->
+  @color:(colorCode, x, y, xEnd = x, yEnd = y, name = @_activeSheetName)->
     xNum = xEnd - x + 1
     yNum = yEnd - y + 1
 
     sheet = @getSheet(name)
     return false if sheet is null
 
-    sheet.getRange(x+1, y+1, xNum, yNum).setBackground(colorCode)
+    sheet.getRange(y+1, x+1, yNum, xNum).setBackground(colorCode)
 
   # セルをクリア
-  @clear:(x, y, name = @_activeSheetName, xEnd = x, yEnd = y)->
+  @clear:(x, y, xEnd = x, yEnd = y, name = @_activeSheetName)->
     xNum = xEnd - x + 1
     yNum = yEnd - y + 1
 
     sheet = @getSheet(name)
     return false if sheet is null
 
-    sheet.getRange(x+1, y+1, xNum, yNum).clear()
+    sheet.getRange(y+1, x+1, yNum, xNum).clear()
+
+  # 特定の列から完全一致文字列検索、最初にヒットしたy座標を返す
+  @searchX:(x, content, yStart = 0, yEnd = null, name = @_activeSheetName)->
+    yEnd = @countY(name)-1 if yEnd is null
+
+    for y in [yStart..yEnd]
+      return y if @get(x, y, name) is content
+    false
+
+  # 特定の列から完全一致文字列を検索、全y座標を返す
+  @searchAllX:(x, content, yStart = 0, yEnd = null, name = @_activeSheetName)->
+    yEnd = @countY(name)-1 if yEnd is null
+
+    res = []
+    for y in [yStart..yEnd]
+      res.push y if @get(x, y, name) is content
+    res
+
+  # 特定の行から完全一致文字列検索、最初にヒットしたx座標を返す
+  @searchY:(y, content, xStart = 0, xEnd = null, name = @_activeSheetName)->
+    xEnd = @countX(name)-1 if yEnd is null
+
+    for x in [xStart..xEnd]
+      return x if @get(x, y, name) is content
+    false
+
+  # 特定の行から完全一致文字列を検索、全x座標を返す
+  @searchAllY:(y, content, xStart = 0, xEnd = null, name = @_activeSheetName)->
+    xEnd = @countX(name)-1 if xEnd is null
+
+    res = []
+    for x in [xStart..xEnd]
+      res.push x if @get(x, y, name) is content
+    res
+
+
+  @countX:(name = @_activeSheetName)->
+    sheet = @getSheet(name)
+    return false if sheet is null
+
+    sheet.getLastColumn()
+
+  @countY:(name = @_activeSheetName)->
+    sheet = @getSheet(name)
+    return false if sheet is null
+
+    sheet.getLastRow()
 
   # EXCEL座標記法を、0スタートのx,y座標記法に直す
   @s2xy:(s)->
@@ -91,3 +137,7 @@ class gas
   # アラートを出す
   @alert:(message)->
     Browser.msgBox message
+
+  # ログを出す
+  @log:(message)->
+    Logger.log message

@@ -40,28 +40,25 @@ gas = (function() {
   gas.get = function(x, y, name) {
     var sheet;
     if (name == null) {
-      name = null;
-    }
-    if (name === null) {
       name = this._activeSheetName;
     }
     sheet = this.getSheet(name);
     if (sheet === null) {
       return false;
     }
-    return sheet.getRange(x + 1, y + 1).getValue();
+    return sheet.getRange(y + 1, x + 1).getValue();
   };
 
-  gas.set = function(val, x, y, name, xEnd, yEnd) {
+  gas.set = function(val, x, y, xEnd, yEnd, name) {
     var sheet, xNum, yNum;
-    if (name == null) {
-      name = this._activeSheetName;
-    }
     if (xEnd == null) {
       xEnd = x;
     }
     if (yEnd == null) {
       yEnd = y;
+    }
+    if (name == null) {
+      name = this._activeSheetName;
     }
     xNum = xEnd - x + 1;
     yNum = yEnd - y + 1;
@@ -69,19 +66,19 @@ gas = (function() {
     if (sheet === null) {
       return false;
     }
-    return sheet.getRange(x + 1, y + 1, xNum, yNum).setValue(val);
+    return sheet.getRange(y + 1, x + 1, yNum, xNum).setValue(val);
   };
 
-  gas.color = function(colorCode, x, y, name, xEnd, yEnd) {
+  gas.color = function(colorCode, x, y, xEnd, yEnd, name) {
     var sheet, xNum, yNum;
-    if (name == null) {
-      name = this._activeSheetName;
-    }
     if (xEnd == null) {
       xEnd = x;
     }
     if (yEnd == null) {
       yEnd = y;
+    }
+    if (name == null) {
+      name = this._activeSheetName;
     }
     xNum = xEnd - x + 1;
     yNum = yEnd - y + 1;
@@ -89,19 +86,19 @@ gas = (function() {
     if (sheet === null) {
       return false;
     }
-    return sheet.getRange(x + 1, y + 1, xNum, yNum).setBackground(colorCode);
+    return sheet.getRange(y + 1, x + 1, yNum, xNum).setBackground(colorCode);
   };
 
-  gas.clear = function(x, y, name, xEnd, yEnd) {
+  gas.clear = function(x, y, xEnd, yEnd, name) {
     var sheet, xNum, yNum;
-    if (name == null) {
-      name = this._activeSheetName;
-    }
     if (xEnd == null) {
       xEnd = x;
     }
     if (yEnd == null) {
       yEnd = y;
+    }
+    if (name == null) {
+      name = this._activeSheetName;
     }
     xNum = xEnd - x + 1;
     yNum = yEnd - y + 1;
@@ -109,7 +106,121 @@ gas = (function() {
     if (sheet === null) {
       return false;
     }
-    return sheet.getRange(x + 1, y + 1, xNum, yNum).clear();
+    return sheet.getRange(y + 1, x + 1, yNum, xNum).clear();
+  };
+
+  gas.searchX = function(x, content, yStart, yEnd, name) {
+    var j, ref, ref1, y;
+    if (yStart == null) {
+      yStart = 0;
+    }
+    if (yEnd == null) {
+      yEnd = null;
+    }
+    if (name == null) {
+      name = this._activeSheetName;
+    }
+    if (yEnd === null) {
+      yEnd = this.countY(name) - 1;
+    }
+    for (y = j = ref = yStart, ref1 = yEnd; ref <= ref1 ? j <= ref1 : j >= ref1; y = ref <= ref1 ? ++j : --j) {
+      if (this.get(x, y, name) === content) {
+        return y;
+      }
+    }
+    return false;
+  };
+
+  gas.searchAllX = function(x, content, yStart, yEnd, name) {
+    var j, ref, ref1, res, y;
+    if (yStart == null) {
+      yStart = 0;
+    }
+    if (yEnd == null) {
+      yEnd = null;
+    }
+    if (name == null) {
+      name = this._activeSheetName;
+    }
+    if (yEnd === null) {
+      yEnd = this.countY(name) - 1;
+    }
+    res = [];
+    for (y = j = ref = yStart, ref1 = yEnd; ref <= ref1 ? j <= ref1 : j >= ref1; y = ref <= ref1 ? ++j : --j) {
+      if (this.get(x, y, name) === content) {
+        res.push(y);
+      }
+    }
+    return res;
+  };
+
+  gas.searchY = function(y, content, xStart, xEnd, name) {
+    var j, ref, ref1, x;
+    if (xStart == null) {
+      xStart = 0;
+    }
+    if (xEnd == null) {
+      xEnd = null;
+    }
+    if (name == null) {
+      name = this._activeSheetName;
+    }
+    if (yEnd === null) {
+      xEnd = this.countX(name) - 1;
+    }
+    for (x = j = ref = xStart, ref1 = xEnd; ref <= ref1 ? j <= ref1 : j >= ref1; x = ref <= ref1 ? ++j : --j) {
+      if (this.get(x, y, name) === content) {
+        return x;
+      }
+    }
+    return false;
+  };
+
+  gas.searchAllY = function(y, content, xStart, xEnd, name) {
+    var j, ref, ref1, res, x;
+    if (xStart == null) {
+      xStart = 0;
+    }
+    if (xEnd == null) {
+      xEnd = null;
+    }
+    if (name == null) {
+      name = this._activeSheetName;
+    }
+    if (xEnd === null) {
+      xEnd = this.countX(name) - 1;
+    }
+    res = [];
+    for (x = j = ref = xStart, ref1 = xEnd; ref <= ref1 ? j <= ref1 : j >= ref1; x = ref <= ref1 ? ++j : --j) {
+      if (this.get(x, y, name) === content) {
+        res.push(x);
+      }
+    }
+    return res;
+  };
+
+  gas.countX = function(name) {
+    var sheet;
+    if (name == null) {
+      name = this._activeSheetName;
+    }
+    sheet = this.getSheet(name);
+    if (sheet === null) {
+      return false;
+    }
+    return sheet.getLastColumn();
+  };
+
+  gas.countY = function(name) {
+    var sheet;
+    if (name == null) {
+      name = this._activeSheetName;
+    }
+    sheet = this.getSheet(name);
+    if (sheet === null) {
+      return false;
+    }
+    return sheet.getLastRow();
   };
 
   gas.s2xy = function(s) {
@@ -149,6 +260,10 @@ gas = (function() {
 
   gas.alert = function(message) {
     return Browser.msgBox(message);
+  };
+
+  gas.log = function(message) {
+    return Logger.log(message);
   };
 
   return gas;
