@@ -19,18 +19,17 @@ gas = (function() {
 
   gas.getSheet = function(name) {
     var sheet;
-    if (this._sheets[name] != null) {
-      return this._sheets[name];
+    if (this._sheets[name] == null) {
+      sheet = this.getSpreadSheet().getSheetByName(name);
+      if (!sheet) {
+        return null;
+      }
+      this._sheets[name] = sheet;
     }
-    sheet = this.getSpreadSheet().getSheetByName(name);
-    if (!sheet) {
-      return null;
-    }
-    this._sheets[name] = sheet;
     return this._sheets[name];
   };
 
-  gas.setActiveSheet = function(name) {
+  gas.as = function(name) {
     if (this.getSheet(name) === null) {
       return false;
     }
@@ -56,21 +55,12 @@ gas = (function() {
   gas.set = function(val, x, y, name, xEnd, yEnd) {
     var sheet, xNum, yNum;
     if (name == null) {
-      name = null;
-    }
-    if (xEnd == null) {
-      xEnd = null;
-    }
-    if (yEnd == null) {
-      yEnd = null;
-    }
-    if (name === null) {
       name = this._activeSheetName;
     }
-    if (xEnd === null) {
+    if (xEnd == null) {
       xEnd = x;
     }
-    if (yEnd === null) {
+    if (yEnd == null) {
       yEnd = y;
     }
     xNum = xEnd - x + 1;
@@ -85,21 +75,12 @@ gas = (function() {
   gas.color = function(colorCode, x, y, name, xEnd, yEnd) {
     var sheet, xNum, yNum;
     if (name == null) {
-      name = null;
-    }
-    if (xEnd == null) {
-      xEnd = null;
-    }
-    if (yEnd == null) {
-      yEnd = null;
-    }
-    if (name === null) {
       name = this._activeSheetName;
     }
-    if (xEnd === null) {
+    if (xEnd == null) {
       xEnd = x;
     }
-    if (yEnd === null) {
+    if (yEnd == null) {
       yEnd = y;
     }
     xNum = xEnd - x + 1;
@@ -114,21 +95,12 @@ gas = (function() {
   gas.clear = function(x, y, name, xEnd, yEnd) {
     var sheet, xNum, yNum;
     if (name == null) {
-      name = null;
-    }
-    if (xEnd == null) {
-      xEnd = null;
-    }
-    if (yEnd == null) {
-      yEnd = null;
-    }
-    if (name === null) {
       name = this._activeSheetName;
     }
-    if (xEnd === null) {
+    if (xEnd == null) {
       xEnd = x;
     }
-    if (yEnd === null) {
+    if (yEnd == null) {
       yEnd = y;
     }
     xNum = xEnd - x + 1;
@@ -137,7 +109,46 @@ gas = (function() {
     if (sheet === null) {
       return false;
     }
-    return sheet.getRange(x + 1, y + 1, xNum, yNum).setBackgrounds(colorCode);
+    return sheet.getRange(x + 1, y + 1, xNum, yNum).clear();
+  };
+
+  gas.s2xy = function(s) {
+    var res;
+    s = s.toUpperCase();
+    if (!(res = s.match(/^([A-Z]+)(\d)+$/))) {
+      return false;
+    }
+    return [this.s2x(res[1]), Number(res[2]) - 1];
+  };
+
+  gas.xy2s = function(x, y) {
+    return this.x2s(x) + (y + 1);
+  };
+
+  gas.s2x = function(s) {
+    var i, j, ref, x;
+    s = s.toUpperCase();
+    x = 0;
+    for (i = j = 0, ref = s.length; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
+      x = (x * 26) + (s.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
+    }
+    return x - 1;
+  };
+
+  gas.x2s = function(x) {
+    var s;
+    x++;
+    s = '';
+    while (x >= 1) {
+      x--;
+      s = String.fromCharCode('A'.charCodeAt(0) + (x % 26)) + s;
+      x = Math.floor(x / 26);
+    }
+    return s;
+  };
+
+  gas.alert = function(message) {
+    return Browser.msgBox(message);
   };
 
   return gas;
