@@ -109,7 +109,7 @@ gas = (function() {
     return sheet.getRange(y + 1, x + 1, yNum, xNum).clear();
   };
 
-  gas.searchX = function(x, content, yStart, yEnd, name) {
+  gas.searchVertical = function(x, content, yStart, yEnd, name) {
     var j, ref, ref1, y;
     if (yStart == null) {
       yStart = 0;
@@ -131,7 +131,7 @@ gas = (function() {
     return false;
   };
 
-  gas.searchAllX = function(x, content, yStart, yEnd, name) {
+  gas.searchVerticalAll = function(x, content, yStart, yEnd, name) {
     var j, ref, ref1, res, y;
     if (yStart == null) {
       yStart = 0;
@@ -154,7 +154,7 @@ gas = (function() {
     return res;
   };
 
-  gas.searchY = function(y, content, xStart, xEnd, name) {
+  gas.searchHorizon = function(y, content, xStart, xEnd, name) {
     var j, ref, ref1, x;
     if (xStart == null) {
       xStart = 0;
@@ -176,7 +176,7 @@ gas = (function() {
     return false;
   };
 
-  gas.searchAllY = function(y, content, xStart, xEnd, name) {
+  gas.searchHorizonAll = function(y, content, xStart, xEnd, name) {
     var j, ref, ref1, res, x;
     if (xStart == null) {
       xStart = 0;

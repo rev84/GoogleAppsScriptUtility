@@ -59,16 +59,16 @@ class gas
 
     sheet.getRange(y+1, x+1, yNum, xNum).clear()
 
-  # 特定の列から完全一致文字列検索、最初にヒットしたy座標を返す
-  @searchX:(x, content, yStart = 0, yEnd = null, name = @_activeSheetName)->
+  # 垂直方向に完全一致文字列検索、最初にヒットしたy座標を返す
+  @searchVertical:(x, content, yStart = 0, yEnd = null, name = @_activeSheetName)->
     yEnd = @countY(name)-1 if yEnd is null
 
     for y in [yStart..yEnd]
       return y if @get(x, y, name) is content
     false
 
-  # 特定の列から完全一致文字列を検索、全y座標を返す
-  @searchAllX:(x, content, yStart = 0, yEnd = null, name = @_activeSheetName)->
+  # 垂直方向に完全一致文字列を検索、全y座標を返す
+  @searchVerticalAll:(x, content, yStart = 0, yEnd = null, name = @_activeSheetName)->
     yEnd = @countY(name)-1 if yEnd is null
 
     res = []
@@ -76,16 +76,16 @@ class gas
       res.push y if @get(x, y, name) is content
     res
 
-  # 特定の行から完全一致文字列検索、最初にヒットしたx座標を返す
-  @searchY:(y, content, xStart = 0, xEnd = null, name = @_activeSheetName)->
+  # 水平方向に完全一致文字列検索、最初にヒットしたx座標を返す
+  @searchHorizon:(y, content, xStart = 0, xEnd = null, name = @_activeSheetName)->
     xEnd = @countX(name)-1 if yEnd is null
 
     for x in [xStart..xEnd]
       return x if @get(x, y, name) is content
     false
 
-  # 特定の行から完全一致文字列を検索、全x座標を返す
-  @searchAllY:(y, content, xStart = 0, xEnd = null, name = @_activeSheetName)->
+  # 水平方向に完全一致文字列を検索、全x座標を返す
+  @searchHorizonAll:(y, content, xStart = 0, xEnd = null, name = @_activeSheetName)->
     xEnd = @countX(name)-1 if xEnd is null
 
     res = []
@@ -93,13 +93,14 @@ class gas
       res.push x if @get(x, y, name) is content
     res
 
-
+  # シートに何列あるか
   @countX:(name = @_activeSheetName)->
     sheet = @getSheet(name)
     return false if sheet is null
 
     sheet.getLastColumn()
 
+  # シートに何行あるか
   @countY:(name = @_activeSheetName)->
     sheet = @getSheet(name)
     return false if sheet is null
